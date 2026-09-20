@@ -1,27 +1,27 @@
-# DEVLOG — Problems Encountered & Fixes
+# DEVLOG - Problems Encountered & Fixes
 
 A running log of real engineering issues hit during the build, how each
 was diagnosed, and how it was fixed (or, where still open, what the plan
 is)
 
-## Module 2 — Options Pricing and Greeks
+## Module 2 - Options Pricing and Greeks
 
 ### Problem 1: Raw Gamma isn't comparable across currency pairs
 
 **What happened:** After aggregating Greeks across the ten-position
-book, INR/USD's Gamma came out to ~4.16 billion — several orders of
+book, INR/USD's Gamma came out to ~4.16 billion - several orders of
 magnitude larger than every other pair, which sat in the tens of
 millions. It dominated the portfolio total to the point of making the
 aggregate number meaningless.
 
 **Root cause:** Gamma's formula has a `1/S` term (spot price in the
-denominator). INR/USD trades at ~0.0105 — roughly three orders of
+denominator). INR/USD trades at ~0.0105 - roughly three orders of
 magnitude smaller than a pair like USD/JPY at ~159. That tiny
 denominator mechanically inflates the raw Gamma number. It's an
 artifact of the quoting convention, not a genuine difference in risk
 between the two positions.
 
-**Fix:** Added a **Cash Gamma** metric — the P&L impact of a 1% move in
+**Fix:** Added a **Cash Gamma** metric - the P&L impact of a 1% move in
 the underlying, computed as:
 
 Cash Gamma = 0.5 × Gamma × (0.01 × Spot)²
@@ -29,7 +29,7 @@ Cash Gamma = 0.5 × Gamma × (0.01 × Spot)²
 Squaring the spot term cancels out the `1/S` scaling problem, making
 Gamma genuinely comparable across pairs regardless of their quote
 level. After the fix, INR/USD's Cash Gamma came out in line with the 
-other four pairs — confirming the fix actually worked rather than 
+other four pairs - confirming the fix actually worked rather than 
 just moving the problem elsewhere.
 
 **Status:** Fixed
@@ -64,7 +64,7 @@ correctly once converted out of JPY
 columns; the raw per-currency columns stay in the table too, for
 reference.
 
-## Module 5 — Signal and Stress Testing
+## Module 5 - Signal and Stress Testing
 
 ### Problem 3: A filename silently broke pandas itself
 
@@ -183,7 +183,7 @@ rather than applying it as a single step-change from day one - a
 reasonable next iteration, not a fix required for this project's
 scope.
 
-## Module 6 — Dashboard Assembly
+## Module 6 - Dashboard Assembly
 
 ### Problem 5: Dashboard silently ran the Mean Reversion tab on 1 year, not 5
 
@@ -214,5 +214,5 @@ silently - worth spot-checking that a "5-year" claim is backed by an
 actual `period="5y"` argument somewhere, not just assumed from a
 function's name or a docstring.
 
-*This file grows as the project does — new entries get added under each
+*This file grows as the project does - new entries get added under each
 week's heading as issues come up, fixed or not.*
